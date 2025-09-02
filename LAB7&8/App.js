@@ -1,42 +1,63 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; // เปลี่ยนจาก createDrawerNavigator
+import { Ionicons } from "@expo/vector-icons"; // เพิ่มการนำเข้าไอคอน
 
 import CategoriesScreen from "./screens/CategoriesScreen";
 import MealsOverviewScreen from "./screens/MealsOverviewScreen";
 import MealDetailsScreen from "./screens/MealDetailScreen";
 import FavoritesScreen from "./screens/FavoritesScreen";
 import FavoritesContextProvider from './store/favorites-context';
+import OrdersScreen from "./screens/OrdersScreen";
+
 
 const Stack = createNativeStackNavigator();
-const Drawer = createDrawerNavigator();
+const Tab = createBottomTabNavigator(); // เปลี่ยนจาก Drawer
 
-function DrawerNavigator() {
+function TabNavigator() {
   return (
-    <Drawer.Navigator
+    <Tab.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: "#351401" },
         headerTintColor: "white",
-        sceneContainerStyle: { backgroundColor: "#3f2f25" },
-        drawerContentStyle: { backgroundColor: '#351401' },
-        drawerInactiveTintColor: 'white',
-        drawerActiveTintColor: '#351401',
-        drawerActiveBackgroundColor: '#e4baa1'
+        tabBarActiveTintColor: "#e4baa1",
+        tabBarStyle: { backgroundColor: "#351401" },
       }}
     >
-      <Drawer.Screen
+      <Tab.Screen
         name="Categories"
         component={CategoriesScreen}
-        options={{ title: "All Categories" }}
+        options={{
+          title: "All Categories",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="list" size={size} color={color} />
+          ),
+        }}
       />
-      <Drawer.Screen
+      <Tab.Screen
         name="Favorites"
         component={FavoritesScreen}
-        options={{ headerTitle: "Klittapas Pongprae ID:6614110015",headerTitleStyle:{fontSize:13} }}
+        options={{
+          title: "Favorites",
+          headerTitleStyle: { fontSize: 13 },
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="star" size={size} color={color} />
+          ),
+        }}
       />
-    </Drawer.Navigator>
+     <Tab.Screen
+        name="Orders"
+        component={OrdersScreen}
+        options={{
+          title: "Orders",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="cart" size={size} color={color} /> // ใช้ไอคอนรูปรถเข็น
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 }
 
@@ -53,9 +74,10 @@ export default function App() {
               contentStyle: { backgroundColor: "#3f2f25" },
             }}
           >
+            {/* เปลี่ยนชื่อ Component และ Screen ให้เรียกใช้ Tab Navigator */}
             <Stack.Screen
-              name="Drawer"
-              component={DrawerNavigator}
+              name="Tabs"
+              component={TabNavigator}
               options={{ headerShown: false }}
             />
             <Stack.Screen name="MealsOverview" component={MealsOverviewScreen} />
@@ -66,7 +88,3 @@ export default function App() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {},
-});
