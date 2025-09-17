@@ -53,14 +53,14 @@ export default function ExpenseForm({
     const dateIsValid = isValidDateString(inputValues.date);
     const descriptionIsValid = expenseData.description.trim().length > 0;
 
-    console.log("amount:", expenseData.amount, "isValid:", amountIsValid);
-    console.log("date:", inputValues.date, "isValid:", dateIsValid);
-    console.log(
-      "desc:",
-      expenseData.description,
-      "isValid:",
-      descriptionIsValid
-    );
+    // console.log("amount:", expenseData.amount, "isValid:", amountIsValid);
+    // console.log("date:", inputValues.date, "isValid:", dateIsValid);
+    // console.log(
+    //   "desc:",
+    //   expenseData.description,
+    //   "isValid:",
+    //   descriptionIsValid
+    // );
 
     if (!amountIsValid || !dateIsValid || !descriptionIsValid) {
       Alert.alert("Invalid input", "Please check your input values");

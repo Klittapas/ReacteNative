@@ -6,6 +6,7 @@ import { DUMMY_EXPENSES } from "../data/expense-data";
 export const ExpensesContext = createContext({
   expenses: [],
   addExpense: ({ description, amount, date }) => {},
+  setExpense:(expenses) =>{},
   deleteExpense: (id) => {},
   updateExpense: (id, { description, amount, date }) => {},
 });
@@ -13,8 +14,7 @@ export const ExpensesContext = createContext({
 function expensesReducer(state, action) {
   switch (action.type) {
     case "ADD": {
-      const id = new Date().toString() + Math.random().toString();
-      return [{ ...action.payload, id }, ...state];
+      return [action.payload,...state]
     }
     case "UPDATE": {
       const idx = state.findIndex((ex) => ex.id === action.payload.id);
@@ -26,7 +26,9 @@ function expensesReducer(state, action) {
     case "DELETE":
       return state.filter((ex) => ex.id !== action.payload);
     case "SET":
-      return action.payload; // แทนที่ทั้งรายการ (ตอนโหลดจากเครื่อง)
+      const inverted = action.payload.reverse()
+      return inverted
+      // return action.payload; // แทนที่ทั้งรายการ (ตอนโหลดจากเครื่อง)
     default:
       return state;
   }
@@ -52,19 +54,18 @@ async function loadExpensesFromDevice() {
 function ExpensesContextProvider({ children }) {
   const [expensesState, dispatch] = useReducer(expensesReducer, DUMMY_EXPENSES);
 
-  // โหลดครั้งแรก
-  useEffect(() => {
-    (async () => {
-      try {
-        const loaded = await loadExpensesFromDevice();
-        if (loaded && loaded.length > 0) {
-          dispatch({ type: "SET", payload: loaded });
-        }
-      } catch (e) {
-        console.log("Load expenses error:", e);
-      }
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       const loaded = await loadExpensesFromDevice();
+  //       if (loaded && loaded.length > 0) {
+  //         dispatch({ type: "SET", payload: loaded });
+  //       }
+  //     } catch (e) {
+  //       console.log("Load expenses error:", e);
+  //     }
+  //   })();
+  // }, []);
 
   // เซฟทุกครั้งที่รายการเปลี่ยน
   useEffect(() => {
@@ -86,12 +87,16 @@ function ExpensesContextProvider({ children }) {
   function updateExpense(id, expenseData) {
     dispatch({ type: "UPDATE", payload: { id, data: expenseData } });
   }
+  function setExpense(expenseData){
+    dispatch({type:"SET",payload:expenseData})
+  }
 
   const value = {
     expenses: expensesState,
-    addExpense,
-    deleteExpense,
-    updateExpense,
+    addExpense:addExpense,
+    setExpense:setExpense,
+    deleteExpense:deleteExpense,
+    updateExpense:updateExpense,
   };
 
   return (
